@@ -20,9 +20,7 @@ int main() {
     my_server ms(server, is_running, cv, mtx);
     ms.start();
 
-    while (is_running) {
-        cv.wait_for(lck, std::chrono::seconds(1), [&is_running]() -> bool { return is_running; });
-    }
+    cv.wait(lck, [&is_running]() -> bool { return !is_running.load(); });
 
     std::cout << "Program successfully ended" << std::endl;
 

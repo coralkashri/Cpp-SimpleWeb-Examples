@@ -16,9 +16,13 @@ void my_server::start() {
 
 void my_server::stop() {
     server.stop();
+    {
+        std::lock_guard<std::mutex> lck(mtx);
+        is_running.store(false);
+    }
     std::cout << "Server is stopped" << std::endl;
     std::cout << "Server thread is stopped" << std::endl;
-    is_running.store(false);
+    cv.notify_one();
 }
 
 void my_server::init() {
